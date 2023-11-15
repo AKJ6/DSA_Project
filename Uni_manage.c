@@ -203,87 +203,54 @@ first pop(first head)//Function to pop the top element/head
 }
 first scholarships(first head,SC_first list)//Function to get top 20% of the people
 { 
-    if (head.top == NULL) 
+if (head.top == NULL) 
     {
         printf("The stack is empty\n");
         return head;
     }
-    Stu* p = head.top;
-    int n = 0;
+    Stu *p = head.top;
+    Stu *highest = NULL;
     while (p != NULL) 
     {
-        p = p->next;
-        ++n;
-    }
-    int top_20_percent = (int)(n * 0.2);
-    if(top_20_percent==0)
-    top_20_percent=top_20_percent+1;
-    p = head.top;
-    Stu* sorted = NULL;
-    while (p != NULL) 
-    {
-        Stu* current = p;
-        p = p->next;
-
-        if 
-        (sorted == NULL || current->CGPA >= sorted->CGPA) 
+        if (highest == NULL || p->CGPA > highest->CGPA) 
         {
-            current->next = sorted;
-            sorted = current;
-        } else 
-        {
-            Stu* temp = sorted;
-            while (temp->next != NULL && temp->next->CGPA < current->CGPA) 
-            {
-                temp = temp->next;
-            }
-            current->next = temp->next;
-            temp->next = current;
+            highest = p;
         }
-    }
-    p = sorted;
-    Stu* h=sorted;
-    /*while(h!=NULL)
-    {
-        printf("%s\n",h->First_Name);
-        printf("%s\n",h->Last_Name);
-        printf("%s\n",h->SRN);
-        printf("%f\n",h->CGPA);
-        h=h->next;
-    }*/
-    int count = 0;
-    while (p != NULL && count < top_20_percent) 
-    {
-        SC* new_scholarship = malloc(sizeof(SC));
-        strcpy(new_scholarship->First_Name, p->First_Name);
-        strcpy(new_scholarship->Last_Name, p->Last_Name);
-        new_scholarship->CGPA = p->CGPA;
-        strcpy(new_scholarship->SRN, p->SRN);
-        new_scholarship->next = list.top;
-        list.top = new_scholarship;
         p = p->next;
-        count++;
     }
-    p = sorted;
-    while (p != NULL) 
-    {
-        Stu* temp = p;
-        p = p->next;
-        free(temp);
+    if (highest == NULL)
+     {
+        printf("No student with valid CGPA found\n");
+        return head;
     }
-    printf("Student with the highest CGPA:\n", top_20_percent);
+    SC *new_scholarship = malloc(sizeof(SC));
+    strcpy(new_scholarship->First_Name, highest->First_Name);
+    strcpy(new_scholarship->Last_Name, highest->Last_Name);
+    new_scholarship->CGPA = highest->CGPA;
+    strcpy(new_scholarship->SRN, highest->SRN);
+    new_scholarship->next = list.top;
+    list.top = new_scholarship;
     p = head.top;
-    count = 0;
-    while (p != NULL && count < top_20_percent) 
-    {
-        printf("First name: %s\n", p->First_Name);
-        printf("Last name: %s\n", p->Last_Name);
-        printf("CGPA: %.2f\n", p->CGPA);
-        printf("SRN: %s\n", p->SRN);
-        printf("----------------------------------\n");
+    Stu *prev = NULL;
+    while (p != NULL) {
+        if (p == highest) {
+            if (prev == NULL) {
+                head.top = p->next;
+            } else {
+                prev->next = p->next;
+            }
+            free(p);
+            break;
+        }
+        prev = p;
         p = p->next;
-        count++;
     }
+    printf("Student with the highest CGPA:\n");
+    printf("First name: %s\n", new_scholarship->First_Name);
+    printf("Last name: %s\n", new_scholarship->Last_Name);
+    printf("CGPA: %.2f\n", new_scholarship->CGPA);
+    printf("SRN: %s\n", new_scholarship->SRN);
+    printf("----------------------------------\n");
     return head;
 }
 int main()
